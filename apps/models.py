@@ -3,6 +3,7 @@ import django.db.models.options as options
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.urlresolvers import reverse
 
 
 options.DEFAULT_NAMES = options.DEFAULT_NAMES + (
@@ -52,6 +53,13 @@ class Student(models.Model):
     # various relationships models
     university = models.ForeignKey(University, null=True, blank=True)
     courses = models.ManyToManyField(Course, null=True, blank=True)
+
+    def __str__ (self):
+        return self.first_name + ' - ' + self.last_name
+
+    def get_absolute_url(self):
+        return reverse('student-detail', kwargs={'student_id': self.pk})
+
 
     class Meta:
         es_index_name = 'django'

@@ -9,8 +9,12 @@ class Command(BaseCommand):
     help = "My shiny new management command."
     
     def handle(self, *args, **options):
+        self.clean()
         self.recreate_index()
         self.push_db_to_index()
+
+    def clean():
+        Student.delete()
 
     def recreate_index(self):
         indices_client = IndicesClient(client=settings.ES_CLIENT)

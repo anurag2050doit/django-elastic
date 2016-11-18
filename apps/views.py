@@ -3,9 +3,11 @@ from urllib.parse import urlencode
 from copy import deepcopy
 from django.http import HttpResponse
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from apps.models import Student
+from .forms import StudentForm
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 client = settings.ES_CLIENT
 
@@ -32,8 +34,77 @@ def autocomplete_view(request):
 
 def student_detail(request):
     student_id = request.GET.get('student_id')
-    student = Student.objects.get(pk=student_id)
-    return render(request, 'student-details.html', context={'student': student})
+    student_sql = Student.objects.get(id=student_id)
+    student = client.get(
+        index="django",
+        doc_type="student",
+        id=student_id)
+    year_in_school = student['_source']['year_in_school']
+    age = student['_source']['age']
+    first_name = student['_source']['first_name']
+    last_name = student['_source']['last_name']
+    context = {
+    "age" : age,
+    "year_in_school": year_in_school,
+    "first_name": first_name,
+    "last_name": last_name,
+    "student_id": student_id,
+    'student': student_sql,
+    }    
+    return render(request, 'student-details.html', context)
+
+def editstudent(request):
+    student_id = request.GET.get('student_id')
+    student = client.get(
+        index="django",
+        doc_type="student",
+        id=student_id)
+    year_in_school = student['_source']['year_in_school']
+    age = student['_source']['age']
+    first_name = student['_source']['first_name']
+    last_name = student['_source']['last_name']
+    context = {
+    "age" : age,
+    "year_in_school": year_in_school,
+    "first_name": first_name,
+    "last_name": last_name,
+    "student_id": student_id,
+    }
+    if request.method == "POST":
+        year_in_school = request.POST['year_in_school']
+        age = request.POST['age']
+        first_name = request.POST['first_name']
+        last_name = request.POST['last_name']
+        doc = {"doc":{
+        'first_name': first_name,
+        'year_in_school': year_in_school,
+        'last_name': last_name,
+        'age': age
+        }}
+        client.update(index="django",
+            doc_type="student",
+            id=student_id,
+            body=doc)
+        context = {
+            "age" : age,
+            "year_in_school": year_in_school,
+            "first_name": first_name,
+            "last_name": last_name,
+            "student_id": student_id,
+            "error_message": "Data update succesfully",
+        }
+        return render(request, 'edit_student.html', context)        
+    
+    return render(request, 'edit_student.html', context)
+
+
+def deletestudent(request):
+    student_id = request.GET.get('student_id')
+    student = client.delete(
+        index="django",
+        doc_type="student",
+        id=student_id)
+    return redirect('index-view')
 
 class HomePageView(TemplateView):
     template_name = "index.html"

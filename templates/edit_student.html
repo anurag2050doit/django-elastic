@@ -1,0 +1,62 @@
+{% extends "index.html" %}
+
+{% block container %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>{{ first_name }} {{ last_name }}</h3>
+                    <p class="text-danger small">{{ error_message }}</p>
+                    <form class="form-horizontal" role="form" action="{% url 'edit-student' %}?student_id={{ student_id }}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_year_in_school">
+                                Year in school:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_year_in_school" maxlength="2" name="year_in_school" type="text" value="{{ year_in_school }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_age">
+                                Age:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_age" maxlength="30" name="age" type="number" value="{{ age }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_first_name">
+                                First name:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_first_name" maxlength="30" name="first_name" type="text" value="{{ first_name }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_last_name">
+                                Last name:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_last_name" maxlength="30" name="last_name" type="text" value="{{ last_name }}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <input type="submit" class="btn btn-success">
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-sm-offset-2 col-sm-10">
+                                <a href="{% url 'student-detail' %}?student_id={{ student_id }}"><button class="btn btn-success">Continue</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

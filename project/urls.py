@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from apps.views import autocomplete_view, student_detail, HomePageView
+from apps.views import autocomplete_view, student_detail, HomePageView, editstudent, deletestudent
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^autocomplete/', autocomplete_view, name='autocomplete-view'),
     url(r'^student', student_detail, name='student-detail'),
+    url(r'edit', editstudent, name='edit-student'),
+    url(r'delete', deletestudent, name='delete-student'),
     url(r'^$', HomePageView.as_view(), name='index-view'),
+
 ]
